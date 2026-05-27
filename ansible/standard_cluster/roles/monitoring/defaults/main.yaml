@@ -1,0 +1,4 @@
+monitoring_namespace: "monitoring"
+helm_release_name: "monitoring"
+
+

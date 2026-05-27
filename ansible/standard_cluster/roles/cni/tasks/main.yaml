@@ -1,0 +1,38 @@
+
+- name: Install PiP 
+  ansible.builtin.apt:
+     name: python3-pip
+     state: present
+     update_cache: yes
+
+- name: Install kubernetes
+  ansible.builtin.pip: 
+     name: kubernetes
+     state: present 
+     executable: pip3
+  
+- name: Build Calico URL
+  set_fact:
+    calico_operator_url: "https://raw.githubusercontent.com/projectcalico/calico/{{ cni_version }}/manifests/tigera-operator.yaml"
+
+- name: Install Tigera Operator
+  kubernetes.core.k8s:
+    src: "{{ calico_operator_url }}"
+    state: present
+    kubeconfig: "/etc/kubernetes/admin.conf"
+  delegate_to: "{{ groups['master_nodes'][0] }}"
+
+
+- name: Apply Parameterized Calico Custom Resources
+  kubernetes.core.k8s:
+    template: calico-resources.yaml.j2
+    state: present
+    kubeconfig: "/etc/kubernetes/admin.conf"
+  register: crd_check
+  until: crd_check is succeeded
+  retries: 10
+  delay: 10
+  delegate_to: "{{ groups['master_nodes'][0]}}"
+
+
+

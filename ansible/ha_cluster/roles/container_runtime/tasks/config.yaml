@@ -1,0 +1,29 @@
+- name: "Create containerd config directory"
+  ansible.builtin.file:
+    path: "/etc/containerd"
+    state: directory
+
+- name: "Generate default config if not exists"
+  ansible.builtin.command: containerd config default
+  register: containerd_default_config
+  changed_when: false
+
+- name: "Deploy config.toml"
+  ansible.builtin.template:
+   src: config.toml.j2
+   dest: /etc/containerd/config.toml
+   mode: '0644'
+  notify: Restart containerd
+
+- name: Enable and start containerd
+  ansible.builtin.systemd:
+    name: containerd
+    enabled: yes
+    state: started 
+
+- name: Wait for containerd socket to become available
+  wait_for:
+    path: "{{ containerd_socket_path | default('/run/containerd/containerd.sock') }}"
+    state: present
+    timeout: 30
+

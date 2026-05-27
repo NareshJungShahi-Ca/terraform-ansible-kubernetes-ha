@@ -1,0 +1,5 @@
+- name: "Import Install Tasks"
+  import_tasks: install.yaml
+  
+- name: "Import Config Tasks"
+  import_tasks: config.yaml   

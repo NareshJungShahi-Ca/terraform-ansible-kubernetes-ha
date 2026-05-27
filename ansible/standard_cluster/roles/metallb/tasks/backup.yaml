@@ -1,0 +1,81 @@
+- name: Ensure Calico is in VXLAN Always mode to fix master-to-pod routing
+  kubernetes.core.k8s:
+    kubeconfig: "./temp_admin.conf"
+    definition:
+      apiVersion: projectcalico.org/v3
+      kind: IPPool
+      metadata:
+        name: default-ipv4-ippool
+      spec:
+        vxlanMode: Always
+        ipipMode: Never
+    state: patched
+  delegate_to: localhost
+  register: calico_patch_result
+
+- name: Wait 30 seconds for Calico VXLAN routing tables to converge
+  ansible.builtin.pause:
+    seconds: 30
+  when: calico_patch_result.changed
+
+
+- name: Apply MetalLb namespace
+  kubernetes.core.k8s:
+    kubeconfig: "./temp_admin.conf"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: metallb-system
+  delegate_to: localhost
+
+
+- name: Install MetalLB components
+  kubernetes.core.k8s:
+    kubeconfig: "./temp_admin.conf"
+    state: present
+    src: https://raw.githubusercontent.com/metallb/metallb/v0.14.5/config/manifests/metallb-native.yaml
+  delegate_to: localhost
+
+- name: Wait for MetalLB webhook service to be responsive
+  kubernetes.core.k8s_info:
+    kubeconfig: "./temp_admin.conf"
+    kind: ValidatingWebhookConfiguration
+    name: metallb-webhook-configuration
+  register: webhook_status
+  until: webhook_status.resources is defined and (webhook_status.resources | length > 0)
+  retries: 10
+  delay: 5
+  delegate_to: localhost
+
+- name: Pause briefly for internal webhook server initialization
+  ansible.builtin.pause:
+    seconds: 15
+
+- name: Configure MetalLB IPAddressPool
+  kubernetes.core.k8s:
+    kubeconfig: "./temp_admin.conf"
+    state: present
+    definition:
+      apiVersion: metallb.io/v1beta1
+      kind: IPAddressPool
+      metadata:
+        name: first-pool
+        namespace: metallb-system
+      spec:
+        addresses:
+          - 192.168.2.240-192.168.2.250
+  delegate_to: localhost
+
+- name: L2 Advertisement
+  kubernetes.core.k8s:
+    kubeconfig: "./temp_admin.conf"
+    state: present
+    definition:
+      apiVersion: metallb.io/v1beta1
+      kind: L2Advertisement
+      metadata:
+        name: l2adv
+        namespace: metallb-system 
+  delegate_to: localhost

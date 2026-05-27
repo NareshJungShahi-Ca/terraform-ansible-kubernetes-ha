@@ -1,0 +1,13 @@
+- name: Construct masters list dynamically
+  ansible.builtin.set_fact:
+    masters: "{{ masters + [ {'name': item, 'ip': hostvars[item]['ansible_host']} ] }}"
+  loop: "{{ groups['master_nodes'] }}"
+  run_once: true
+
+- name: "Import HAproxy"
+  import_tasks: haproxy.yaml
+
+- name: "Import Keepalived"
+  import_tasks: keepalived.yaml
+
+  

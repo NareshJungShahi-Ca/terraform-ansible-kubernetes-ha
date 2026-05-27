@@ -1,0 +1,10 @@
+- name: Install NGINX Gateway Fabric
+  kubernetes.core.helm:
+    name: ngf
+    chart_ref: oci://ghcr.io/nginx/charts/nginx-gateway-fabric
+    release_namespace: nginx-gateway
+    create_namespace: true
+    kubeconfig: "/etc/kubernetes/admin.conf"
+    state: present
+  delegate_to: "{{ groups['master_nodes'][0]}}"
+

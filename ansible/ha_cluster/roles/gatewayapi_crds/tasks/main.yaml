@@ -1,0 +1,8 @@
+- name: Install Gateway API CRDs
+  kubernetes.core.k8s:
+    kubeconfig: "./temp_admin.conf"
+    state: present
+    src: https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/standard-install.yaml
+  delegate_to: localhost
+
+

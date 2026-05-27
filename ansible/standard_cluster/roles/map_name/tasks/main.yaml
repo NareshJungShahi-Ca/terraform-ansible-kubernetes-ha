@@ -1,0 +1,13 @@
+
+- name: Persistently map controlplane in cloud-init template
+  ansible.builtin.lineinfile:
+    path: /etc/cloud/templates/hosts.debian.tmpl
+    regexp: '^\s*.*\s+controlplane$'
+    line: "{{ hostvars[groups['master_nodes'][0]].ansible_default_ipv4.address }} controlplane"
+    state: present
+    backup: yes
+
+- name: Force cloud-init to regenerate /etc/hosts
+  ansible.builtin.command:
+    cmd: cloud-init single --name update_etc_hosts
+  changed_when: true

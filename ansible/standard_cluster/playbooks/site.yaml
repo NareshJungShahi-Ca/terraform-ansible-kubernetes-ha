@@ -1,0 +1,46 @@
+---
+- name: "Configure Master and Worker Node for Installing Kubernetes"
+  hosts: Nodes
+  become: yes
+  roles:
+    - temporary_disable
+    - permanent_disable
+    - container_runtime
+    - kubernetes
+
+- name: "Enable IPv4 forwarding and bridge-nf-call-iptables and install avahi-daemon and libnss-mdns"
+  hosts: all
+  become: yes
+  roles:
+   - load_kernal_modules
+   - sysctl_parameters
+   - map_name
+
+- name: "Initialize First Control Plane and ADDON"
+  hosts: master_nodes
+  become: yes
+  roles:
+   - kubeadm_init
+   - cni
+
+- name: "Setup and Join Worker"
+  hosts: worker_nodes
+  become: yes
+  roles:
+    - kubeadm_join_workers
+
+- name: "Setup for external loadbalancer"
+  hosts: master_nodes
+  become: yes
+  roles:
+    - metallb
+    - install_helm
+    - gatewayapi_crds
+    - gateway_api_controller
+    - cert-manager
+    
+- name: Monitoring Setup
+  hosts: master_nodes
+  become: yes
+  roles:
+    - monitoring

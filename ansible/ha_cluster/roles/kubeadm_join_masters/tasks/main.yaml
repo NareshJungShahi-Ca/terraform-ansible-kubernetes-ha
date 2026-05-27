@@ -1,0 +1,11 @@
+- name: "Check if already joined"
+  ansible.builtin.stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: joined
+
+- name: "Join control plane"
+  command: "{{ hostvars[groups['master_nodes'][0]]['kube_join']['master'] }}"
+  when:
+    - not joined.stat.exists
+    - inventory_hostname != groups['master_nodes'][0]
+

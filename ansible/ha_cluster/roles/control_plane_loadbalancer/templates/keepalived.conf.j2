@@ -1,0 +1,26 @@
+vrrp_script chk_haproxy {
+    script "/usr/bin/pgrep haproxy"
+    interval 2
+    weight -20
+}
+
+vrrp_instance VI_1 {
+    state {{ hostvars[inventory_hostname].keepalived_role | upper }}
+    interface {{ ansible_default_ipv4.interface  }}
+    virtual_router_id {{ keeplived_router_id }}
+    priority {{ hostvars[inventory_hostname].ansible_group_priority }}
+    advert_int 1
+
+    authentication {
+        auth_type PASS
+        auth_pass {{ auth_pass }}
+    }
+
+    virtual_ipaddress {
+        {{ vip }}
+    }
+
+    track_script {
+        chk_haproxy
+    }
+}

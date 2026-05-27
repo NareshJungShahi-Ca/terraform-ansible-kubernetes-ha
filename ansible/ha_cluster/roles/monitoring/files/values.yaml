@@ -1,0 +1,37 @@
+grafana:
+  enabled: false
+  # service:
+  #   type: LoadBalancer
+  # adminPassword: "admin"
+  # nodeSelector:
+  #   kubernetes.io/role: worker
+
+prometheus:
+  enabled: true
+  service:
+    type: LoadBalancer
+  prometheusSpec:
+    retention: 1d
+    serviceMonitorSelectorNilUsesHelmValues: false
+    maximumStartupDurationSeconds: 60
+    
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 300m
+      limits:
+        memory: 1.5Gi
+
+    nodeSelector:
+      kubernetes.io/role: worker
+
+nodeExporter:
+  enabled: true
+
+
+kubeStateMetrics:
+  enabled: true
+
+
+alertmanager:
+  enabled: false

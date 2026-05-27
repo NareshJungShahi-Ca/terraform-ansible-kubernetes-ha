@@ -1,0 +1,7 @@
+vip: "192.168.2.100"
+haproxy_port: 6443
+keeplived_router_id: 51
+ansible_group_priority: 100
+auth_pass: "securepass"
+
+masters: []

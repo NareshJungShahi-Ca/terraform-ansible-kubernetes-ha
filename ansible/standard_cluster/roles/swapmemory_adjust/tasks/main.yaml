@@ -1,0 +1,6 @@
+- name: "Setting swap memory at 10 for load balancer node"
+  ansible.posix.sysctl:
+    name: vm.swappiness
+    value: '10'
+    state: present
+

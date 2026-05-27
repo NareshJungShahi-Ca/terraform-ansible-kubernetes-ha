@@ -1,0 +1,107 @@
+- name: Deploy MetalLB
+  run_once: true
+  delegate_to: localhost
+  block:
+
+    - name: Install MetalLB manifests
+      kubernetes.core.k8s:
+        kubeconfig: "./temp_admin.conf"
+        state: present
+        definition: "{{ lookup('file', role_path + '/files/metallb-native.yaml') | from_yaml_all }}"
+
+    - name: Wait for MetalLB controller deployment
+      kubernetes.core.k8s_info:
+        kubeconfig: "./temp_admin.conf"
+        api_version: apps/v1
+        kind: Deployment
+        namespace: metallb-system
+        name: controller
+      register: metallb_controller
+      until:
+        - metallb_controller.resources | length > 0
+        - metallb_controller.resources[0].status.readyReplicas is defined
+        - metallb_controller.resources[0].status.readyReplicas | int > 0
+      retries: 30
+      delay: 10
+    
+    - name: Wait for MetalLB speaker daemonset
+      kubernetes.core.k8s_info:
+        kubeconfig: "./temp_admin.conf"
+        api_version: apps/v1
+        kind: DaemonSet
+        namespace: metallb-system
+        name: speaker
+      register: metallb_speaker
+      until:
+        - metallb_speaker.resources | length > 0
+        - metallb_speaker.resources[0].status.numberReady ==
+          metallb_speaker.resources[0].status.desiredNumberScheduled
+      retries: 30
+      delay: 10
+
+    - name: Temporarily remove MetalLB webhook to prevent bootstrap timeouts
+      kubernetes.core.k8s:
+        kubeconfig: "./temp_admin.conf"
+        state: absent
+        definition:
+          apiVersion: admissionregistration.k8s.io/v1
+          kind: ValidatingWebhookConfiguration
+          metadata:
+            name: metallb-webhook-configuration
+      ignore_errors: yes
+
+
+    - name: Wait for MetalLB webhook endpoints
+      kubernetes.core.k8s_info:
+        kubeconfig: "./temp_admin.conf"
+        api_version: v1
+        kind: Endpoints
+        namespace: metallb-system
+        name: metallb-webhook-service
+      register: metallb_webhook
+      until:
+        - metallb_webhook.resources | length > 0
+        - metallb_webhook.resources[0].subsets is defined
+      retries: 30
+      delay: 5
+
+    - name: Wait for webhook TLS initialization
+      ansible.builtin.pause:
+        seconds: 20
+
+    - name: Configure MetalLB IPAddressPool
+      kubernetes.core.k8s:
+        kubeconfig: "./temp_admin.conf"
+        state: present
+        definition:
+          apiVersion: metallb.io/v1beta1
+          kind: IPAddressPool
+          metadata:
+            name: ip-address-pool
+            namespace: metallb-system
+          spec:
+            addresses: "{{ metallb_ip_ranges }}"
+
+    
+    - name: Configure MetalLB L2Advertisement
+      kubernetes.core.k8s:
+        kubeconfig: "./temp_admin.conf"
+        state: present
+        definition:
+          apiVersion: metallb.io/v1beta1
+          kind: L2Advertisement
+          metadata:
+            name: l2adv
+            namespace: metallb-system
+          spec:
+            ipAddressPools:
+             - ip-address-pool
+
+
+    - name: Restore MetalLB manifests (re-enables webhook validation)
+      kubernetes.core.k8s:
+        kubeconfig: "./temp_admin.conf"
+        state: present
+        definition: "{{ lookup('file', role_path + '/files/metallb-native.yaml') | from_yaml_all }}"
+
+    

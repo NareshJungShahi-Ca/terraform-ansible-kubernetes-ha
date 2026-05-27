@@ -1,0 +1,6 @@
+kubernetes_version: "v1.36"
+kube_version_full: "1.36.0-1.1"
+pod_network_cidr: "172.16.0.0/16"
+cni_version: "v3.27.0"
+vip: "192.168.2.100"
+

@@ -1,0 +1,57 @@
+- name: Install dependencies
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+    update_cache: yes
+
+- name: Create keyrings (If not exist)
+  ansible.builtin.file:
+   name: /etc/apt/keyrings
+   state: directory
+   mode: '0755'
+
+- name: "Downlaod kubernetes GPG key (raw)"
+  ansible.builtin.get_url:
+    url: "https://pkgs.k8s.io/core:/stable:/{{ kubernetes_version }}/deb/Release.key"
+    dest: "/tmp/kubernetes-apt-keyring.gpg"
+    mode: '0644'
+
+- name: "Convert GPG into binary"
+  ansible.builtin.command: 
+    cmd: >-
+     gpg --dearmor
+     -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      /tmp/kubernetes-apt-keyring.gpg
+    creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+- name: " Add kuberentes repo"
+  ansible.builtin.deb822_repository:
+    name: kubernetes
+    types: deb
+    uris: "https://pkgs.k8s.io/core:/stable:/{{ kubernetes_version }}/deb/"
+    suites: "/"
+    components: []
+    signed_by: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    state: present 
+  notify: Update Cache
+
+
+- name: "Install Kubernetes components"
+  ansible.builtin.apt:
+    name:
+      - "kubeadm={{ kube_version_full }}" 
+      - "kubectl={{ kube_version_full }}" 
+      - "kubelet={{ kube_version_full }}"
+    state: present
+    update_cache: yes   
+
+- name: "Freeze Kubernetes versions (Hold)"
+  ansible.builtin.dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  loop:
+    - kubelet
+    - kubeadm
+    - kubectl 

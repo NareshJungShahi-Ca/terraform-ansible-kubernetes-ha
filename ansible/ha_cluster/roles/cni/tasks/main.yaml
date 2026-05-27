@@ -1,0 +1,32 @@
+
+- name: Prepare Kubeconfig in control machine
+  ansible.builtin.fetch:
+   src: /etc/kubernetes/admin.conf
+   dest: "./temp_admin.conf"
+   flat: yes
+  
+- name: Build Calico URL
+  set_fact:
+    calico_operator_url: "https://raw.githubusercontent.com/projectcalico/calico/{{ cni_version }}/manifests/tigera-operator.yaml"
+
+- name: Install Tigera Operator
+  kubernetes.core.k8s:
+    src: "{{ calico_operator_url }}"
+    state: present
+    kubeconfig: "./temp_admin.conf"
+  delegate_to: localhost
+  become: no
+
+- name: Apply Parameterized Calico Custom Resources
+  kubernetes.core.k8s:
+    template: calico-resources.yaml.j2
+    state: present
+    kubeconfig: "./temp_admin.conf"
+  register: crd_check
+  until: crd_check is succeeded
+  retries: 10
+  delay: 10
+  delegate_to: localhost
+  become: no
+
+
