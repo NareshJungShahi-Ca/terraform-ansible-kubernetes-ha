@@ -17,7 +17,8 @@ Built for infrastructure automation, Kubernetes operations, DevOps learning, and
 
 ## Kubernetes Clusters
 
-![Cluster Architecture](Cluster_Architecture.png)
+![Cluster Architecture](/docs/images/Cluster_Architecture.png)
+
 
 ---
 
@@ -25,25 +26,39 @@ Built for infrastructure automation, Kubernetes operations, DevOps learning, and
 
 ## Cluster Nodes
 
-![Cluster Nodes](docs/images/kubectl-nodes.png)
+### Standard Kubernetes Cluster
+![Cluster Nodes](docs/images/Standard_cluster.png)
+
+### HA Kubernetes Cluster
+![Cluster Nodes](docs/images/HA_cluster.png)
 
 ---
 
 ## HA Failover Testing
 
-![HA Failover](docs/images/ha-failover.png)
+### Control Plane Failover
+![HA Failover](docs/images/HA_Failover_test-1.png)
+![HA Failover](docs/images/HA_Failover_test-2.png)
+![HA Failover](docs/images/HA_Failover_test-3.png)
+
+### Load Balancer Failover
+![HA Failover](docs/images/HA_Failover_test-4.png)
+![HA Failover](docs/images/HA_Failover_test-5.png)
+![HA Failover](docs/images/HA_Failover_test-6.png)
 
 ---
 
 ## MetalLB External IP
 
-![MetalLB](docs/images/metallb.png)
+![MetalLB](docs/images/MetalIB.png)
 
 ---
 
 ## Prometheus Monitoring
 
-![Prometheus](docs/images/prometheus.png)
+![Prometheus](docs/images/Prometheus-D-0.png)
+![Prometheus](docs/images/Prometheus-D-1.png)
+![Prometheus](docs/images/Prometheus-D-3.png)
 
 ---
 
@@ -106,7 +121,7 @@ Built for infrastructure automation, Kubernetes operations, DevOps learning, and
 
 Detailed setup and operational guides:
 
-- [Standard Cluster Installation](docs/installation/standard-cluster.md)
+- [Standard Cluster Installation](docs/installation/standard_cluster.md)
 - [HA Cluster Installation](docs/installation/ha-cluster.md)
 - [Upgrade Standard Cluster to HA](docs/installation/upgrade-standard-to-ha.md)
 - [Downgrade HA Cluster to Standard](docs/installation/downgrade-ha-to-standard.md)
