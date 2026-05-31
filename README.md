@@ -64,9 +64,9 @@ Built for infrastructure automation, Kubernetes operations, DevOps learning, and
 
 # Demo Videos
 
-- [Deploying Standard vs HA Kubernetes Clusters](YOUR_VIDEO_LINK)
-- [Upgrading Standard Cluster to HA Cluster](YOUR_VIDEO_LINK)
-- [HA Cluster Failure Testing](YOUR_VIDEO_LINK)
+- [Deploying Standard vs HA Kubernetes Clusters](https://youtu.be/5P0BwMrT-NQ)
+- [Upgrading Standard Cluster to HA Cluster](https://youtu.be/aHgMB3grCxc)
+- [HA Cluster Failure Testing](https://youtu.be/t41vQ-EFL1Y)
 
 ---
 
@@ -125,8 +125,7 @@ Detailed setup and operational guides:
 - [HA Cluster Installation](docs/installation/ha-cluster.md)
 - [Upgrade Standard Cluster to HA](docs/installation/upgrade-standard-to-ha.md)
 - [Downgrade HA Cluster to Standard](docs/installation/downgrade-ha-to-standard.md)
-- [Prometheus Monitoring Setup](docs/monitoring/prometheus.md)
-- [Troubleshooting Guide](docs/troubleshooting/)
+
 
 ---
 
