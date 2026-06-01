@@ -50,7 +50,7 @@ The deployment provisions infrastructure with Terraform and configures Kubernete
 
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/terraform-ansible-kubernetes-ha.git
+git clone https://github.com/NareshJungShahi-Ca/terraform-ansible-kubernetes-ha.git
 
 cd terraform-ansible-kubernetes-ha
 ```
