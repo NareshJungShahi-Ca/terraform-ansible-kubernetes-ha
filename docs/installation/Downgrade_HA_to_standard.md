@@ -46,28 +46,48 @@ The deployment provisions infrastructure with Terraform and configures Kubernete
 
 ---
 
-# Clone Repository
+# Current Cluster 
+
+```bash
+multipass list
+```
+
+Example:
+
+```text
+Name            State    IPv4             Image
+k8s-lb-0        Running  192.168.2.8     Ubuntu 22.04 LTS
+k8s-lb-1        Running  192.168.2.9     Ubuntu 22.04 LTS
+k8s-master-0    Running  192.168.2.10    Ubuntu 22.04 LTS
+k8s-master-1    Running  192.168.2.11    Ubuntu 22.04 LTS
+k8s-master-2    Running  192.168.2.12    Ubuntu 22.04 LTS
+k8s-worker-0    Running  192.168.2.13    Ubuntu 22.04 LTS
 
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/terraform-ansible-kubernetes-ha.git
+multipass shell k8s-master-0
+kubectl get nodes
+```
 
-cd terraform-ansible-kubernetes-ha
+Example:
+
+```text
+NAME            STATUS   ROLES           AGE   VERSION
+k8s-master-0    Ready    control-plane   5m    v1.36.x
+k8s-master-1    Ready    control-plane   5m    v1.36.x
+k8s-master-2    Ready    control-plane   5m    v1.36.x
+k8s-worker-0    Ready    <none>          4m    v1.36.x
 ```
 
 ---
 
 
-# Provision Virtual Machines
+# Reduce  Virtual Machines
 
-Initialize Terraform:
 
 ```bash
 cd terraform
-terraform init
 ```
-
-# Configure Infrastructure
 
 Edit Terraform variables:
 
@@ -118,15 +138,13 @@ k8s-worker-0    Running  192.168.2.11    Ubuntu 22.04 LTS
 k8s-worker-1    Running  192.168.2.12    Ubuntu 22.04 LTS
 ```
 
-# Configure Kubernetes Cluster
-
-Move into Ansible directory:
+### Move into Ansible directory:
 
 ```bash
 cd ../ansible/standard_cluster
 ```
 
-Run deployment playbook:
+### Run deployment playbook:
 
 ```bash
 ansible-playbook site.yaml
