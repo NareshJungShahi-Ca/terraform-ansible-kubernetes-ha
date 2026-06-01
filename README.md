@@ -122,9 +122,9 @@ Built for infrastructure automation, Kubernetes operations, DevOps learning, and
 Detailed setup and operational guides:
 
 - [Standard Cluster Installation](docs/installation/standard_cluster.md)
-- [HA Cluster Installation](docs/installation/ha-cluster.md)
-- [Upgrade Standard Cluster to HA](docs/installation/upgrade-standard-to-ha.md)
-- [Downgrade HA Cluster to Standard](docs/installation/downgrade-ha-to-standard.md)
+- [HA Cluster Installation](docs/installation/HA_cluster.md)
+- [Upgrade Standard Cluster to HA](docs/installation/Upgrade_standard_to_ha.md)
+- [Downgrade HA Cluster to Standard](docs/installation/Downgrade_HA_to_standard.md)
 
 
 ---
