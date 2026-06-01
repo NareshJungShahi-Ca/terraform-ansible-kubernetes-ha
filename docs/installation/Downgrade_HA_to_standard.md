@@ -19,7 +19,7 @@ The deployment provisions infrastructure with Terraform and configures Kubernete
 
 # Architecture
 
-![Standard Cluster Architecture](../../images/standard-cluster.png)
+![Standard Cluster Architecture](../images/Downgrade.png)
  
 ---
 
@@ -62,7 +62,8 @@ k8s-master-0    Running  192.168.2.10    Ubuntu 22.04 LTS
 k8s-master-1    Running  192.168.2.11    Ubuntu 22.04 LTS
 k8s-master-2    Running  192.168.2.12    Ubuntu 22.04 LTS
 k8s-worker-0    Running  192.168.2.13    Ubuntu 22.04 LTS
-
+```
+---
 
 ```bash
 multipass shell k8s-master-0
