@@ -19,7 +19,7 @@ The deployment provisions infrastructure with Terraform and configures Kubernete
 
 # Architecture
 
-![Standard Cluster Architecture](../../images/HA_cluster.png)
+![Standard Cluster Architecture](../images/HA_kubernetes.png)
  
 ---
 
